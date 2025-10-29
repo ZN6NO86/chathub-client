@@ -1,0 +1,52 @@
+.header{
+    flex-shrink: 0;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+
+}
+.content{
+    width: 100%;
+    align-self: flex-start;
+    flex:1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: left;
+}
+.textContent{
+    margin-left: 30px;
+    margin-right: 30px;
+    border-bottom: 1px solid #CCCCCC;
+    
+}
+.inputArea{
+    height: 80px;
+    width: 100%;
+    display: flex;
+    background-color: #CCCCCC;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px;
+}
+.textBox{
+    flex: 1;
+    resize: none;
+    margin-left: 30px;
+    max-height: 8em;
+    line-height: 1.4em;
+    padding: 8px 12px;
+    width: 70%;
+    font-size: small;
+    border:  1px solid #CCCCCC;
+    border-radius: 16px;
+}
+.sendBtn{
+    cursor: pointer;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    border: none;
+}

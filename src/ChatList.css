@@ -1,0 +1,75 @@
+html,body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+.addBtn{
+    position: absolute;
+    background-color: transparent;
+    border: none;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    border: none;
+}
+.chatLabel{
+    margin-left: 30px;
+}
+.chatLabel+.chatLabel{
+    border-top: 1px solid #ccc;
+}
+.header{
+    flex-shrink: 0;
+    height: 60px;
+    display: flex;
+}
+.content{
+    align-self: flex-start;
+    flex:1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+}
+.footer{
+    flex-shrink: 0;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    background-color: #CCCCCC;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 20px;
+}
+.iconBtn{
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background-color: transparent;
+    justify-content: center;
+    color: black;
+    padding: 10px 14px;
+    font-size: 10px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: 0.2s;
+}
+.icon{
+    font-size: 22px;
+    margin-bottom: 3px;
+}
+/*.friendListBtn{
+    cursor: pointer;
+    background-color:#AAAAAA;
+    color: white;
+}
+.settingsBtn{
+    cursor: pointer;
+    background-color:#AAAAAA;
+    color: white;
+}*/
