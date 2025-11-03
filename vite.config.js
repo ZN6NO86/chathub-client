@@ -8,5 +8,9 @@ export default defineConfig({
     headers:{
       'Cache-Control': 'no-store, no-cache, must-revalidate'
     }
+  },
+  optimizeDeps:{
+    include: ['matrix-js-sdk'],
+    
   }
 })

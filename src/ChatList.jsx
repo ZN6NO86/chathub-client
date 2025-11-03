@@ -1,27 +1,43 @@
+
 import React, { useEffect, useState } from "react";
+
 import { RiChat3Line, RiContactsLine, RiAccountCircleLine, RiAddCircleLine } from "react-icons/ri";
 import "./ChatList.css"
 import "./Basic.css"
-import axios from "axios";
-export default function ChatList({onSelectChat, onSelectBtn, userInfo, connection}){
+export default function ChatList({client, onSelectChat, onSelectBtn}){
     const [chats, setChats] = useState([]);
     const [headerText, setHeadText] = useState("");
     useEffect(() =>{
-        const fetchChats = async () => {
-            try{
-                const res = await axios.post("http://localhost:5111/api/chat/pullChatList", {UserId: userInfo.id});
-                console.log("Chatlist response:", res)
-                console.log("Send userId:", userInfo.id);
-                setChats(res.data);
-            }catch (err){
-                console.error(err);
-            }
-        };
-        fetchChats();
-    },[userInfo, connection]);
-    useEffect(() => {
-        setHeadText(userInfo.username);
-    }, [userInfo]);
+        setHeadText(client.getUserId());
+                //console.log(client);
+                const rooms = client.getRooms();
+                console.log("roomList:", rooms);
+                const roomData = rooms.map(room => {
+                    const messages = room.timeline.filter(e => e.getType() === "m.room.message");
+                    const lastMsg = messages[messages.length -1];
+                    return{
+                        roomId: room.roomId,
+                        roomName: room.name,
+                        lastMessage: lastMsg?.getContent()?.body || "(No messages yet)",
+                        timeStamp: lastMsg?.getTs() || 0
+                    }
+                });
+                setChats(roomData);
+                client.on("room.timeline", (event, room) => {
+                    if(event.getType() === "m.room.message"){
+                        const newLastMsg = event.getContent();
+                        const newTimeStamp = event.getTs();
+                        setChats(prevChats => 
+                            prevChats.map(prevChat => 
+                                prevChat.roomId === room.room_id ? {...prevChat, lastMessage: newLastMsg.body, timeStamp: newTimeStamp} : prevChat
+                            )
+                        );
+                    }
+                });
+            
+        
+    },[client]);
+
     return(
       <div className="baseLayout">
         <header className="header">
@@ -38,10 +54,13 @@ export default function ChatList({onSelectChat, onSelectBtn, userInfo, connectio
             chats.map((chat) => (
                 <div
                     key={chat}
-                    onClick={() => onSelectChat(chat)}
+                    onClick={() => {
+                        onSelectChat(chat);
+                    }}
                 >   
                     <div className="chatLabel">
-                        <h4 className="chatName">{chat.name}</h4>
+                        <h4 className="chatName">{chat.roomName}</h4>
+                        <p>{chat.lastMessage}</p>
                     </div> 
                 </div>
             ))

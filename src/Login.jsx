@@ -1,23 +1,20 @@
 import React, {useState } from "react";
 import './Login.css';
 import "./Basic.css"
-import axios from "axios";
-export default function Login({onSuccess, onSignup}) {
+export default function Login({client, onSuccess, onSignup}) {
+  //const client = getMatrixClient();
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
   //const [userInfo, setUserInfo] = useState(null);
-  
-  const handleLogin = async () => {
-    try {
-      const res = await axios.post("http://localhost:5111/api/auth/login", {
-        UserId: userID,
-        Password: password
-      });
-      console.log(res.data.user);
-      onSuccess(res.data.user);
-    } catch (err) {
-      console.error(err);
-    }
+  async function handleLogin() {
+    try{
+			const res = await client.loginWithPassword(userID, password);
+			console.log("Login result:", res);
+            console.log(client.credentials);
+			onSuccess(res.user_id);
+		}catch(err){
+			console.log("Login failed", err);
+		}
   };
   return (
     <div className="loginModule">
