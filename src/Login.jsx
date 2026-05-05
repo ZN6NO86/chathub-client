@@ -1,17 +1,27 @@
 import React, {useState } from "react";
+import * as sdk from "matrix-js-sdk";
 import './Login.css';
 import "./Basic.css"
-export default function Login({client, onSuccess, onSignup}) {
+export default function Login({onSuccess, onSignup}) {
   //const client = getMatrixClient();
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
   //const [userInfo, setUserInfo] = useState(null);
   async function handleLogin() {
     try{
-			const res = await client.loginWithPassword(userID, password);
+            const tmpClient = sdk.createClient({baseUrl: "http://localhost:8008"});
+			const res = await tmpClient.loginRequest({
+                type: "m.login.password", 
+                identifier: {
+                    type: "m.id.user",
+                    user: userID
+                }, 
+                password: password
+            });
 			console.log("Login result:", res);
-            console.log(client.credentials);
-			onSuccess(res.user_id);
+            tmpClient.stopClient();
+            //console.log(client.credentials);
+			onSuccess(res);
 		}catch(err){
 			console.log("Login failed", err);
 		}
@@ -33,7 +43,7 @@ export default function Login({client, onSuccess, onSignup}) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button className=" loginBtn" onClick={() => handleLogin()}>
+      <button className=" loginBtn" onClick={async () => await handleLogin()}>
         Login
       </button>
       <button className="signupBtn" onClick={() => onSignup()}>

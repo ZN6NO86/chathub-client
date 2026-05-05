@@ -1,12 +1,16 @@
-import React,  {useEffect, useState} from "react";
-import { RiSendPlane2Line, RiArrowGoBackLine } from "react-icons/ri";
+import React,  {useEffect, useInsertionEffect, useRef, useState} from "react";
+import { RiImageLine, RiSendPlane2Line, RiArrowGoBackLine } from "react-icons/ri";
 import "./Basic.css"
 import "./ChatRoom.css"
+import {compressImage} from "./imageProcess.js"
 export default function ChatRoom({client, curChat, onJump}){
     const [msgText, setMsgText] = useState("");
     //const [room, setRoom] = useState(null);
     const [messages, setMessages] = useState([]);
     const [header, setHeader] = useState("");
+    const [sendMode, setSendMode] = useState("text");
+    const [mediaList, setMediaList] = useState([]);
+    const fileInputRef = useRef(null);
     useEffect(() => {
         console.log("Room name set.");
     }, [header])
@@ -37,6 +41,24 @@ export default function ChatRoom({client, curChat, onJump}){
         client.on("room.timeline", onNewMessage);
         return () => client.removeListener("room.timeline", onNewMessage);
     },[client, curChat]);
+    useEffect(() => {
+        console.log("File has been chosen.", mediaList);
+    }, [mediaList]);
+    function openPicker(){
+        fileInputRef.current.click();
+    }
+    async function handleSelect(e){
+        const file = e.target.files[0];
+        const compressedBlob = await compressImage(file);
+        const previewUrl = URL.createObjectURL(compressedBlob);
+        const previewFile = new File([compressedBlob], file.name, {type: file.type} );
+        const newMediaList = [...mediaList, {
+            file: previewFile, 
+            url: previewUrl, 
+            type: file.type.startsWith("image/") ? "image" : "video"
+        }];
+        setMediaList(newMediaList);
+    }
     return(
         <div className="baseLayout">
             <header className="header">
@@ -61,7 +83,33 @@ export default function ChatRoom({client, curChat, onJump}){
                     ))
                 }
             </main>
+            {
+                (mediaList) && 
+                <div className="previewContainer">
+                    {
+                        mediaList.map((file, index) => (
+                            file.type === "image" ? 
+                            <img src={file.url} className="previewImg" key={index}/> : 
+                            <video src={file.url} className="previewVideo"/>
+                        ))
+                    }   
+                </div>
+            }
             <footer className="inputArea">
+                <button 
+                    className="imageBtn"
+                    onClick={openPicker}    
+                >
+                    <RiImageLine />   
+                </button>
+                <input 
+                    type="file" 
+                    accept="image/*" 
+                    capture="album"
+                    ref={fileInputRef}
+                    onChange={handleSelect}
+                    style={{display: "none"}}
+                />
                 <textarea 
                     className="textBox"
                     type="text"

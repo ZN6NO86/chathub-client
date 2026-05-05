@@ -20,25 +20,35 @@ function App() {
 	function onChangePage(nextPage){
 		setPage(nextPage);
 	}
-	useEffect(() =>{
+	/*useEffect(() =>{
 		const matrixClient = sdk.createClient({baseUrl: "http://localhost:8008"});
 		setClient(matrixClient);
-	},[]);
+	},[]);*/
 	useEffect(() => {
 		if(!userId || !client) return;
 		if(client.isStarted) return;
 
-		console.log("🚀 Starting Matrix client for:", userId);
-		client.startClient({ initialSyncLimit: 10 });
-
-		client.once("sync", (state) => {
-			if (state === "PREPARED") {
-				console.log("✅ Client ready:", client.getUserId());
-				setPage("chatList");
-				client.isStarted = true;
-			}
-		});
-
+		console.log("🚀 Starting Matrix client for:", client);
+		console.log("client token:", client.getAccessToken());
+		console.log("is logged in", client.isLoggedIn());
+		/*const oldRequest = client.http.requestOtherUrl.bind(client.http);
+		client.http.requestOtherUrl = async (...args) => {
+		const [method, url] = args;
+		console.log("🛰️", method, url, "token:", client.http.opts.accessToken);
+		return oldRequest(...args);
+		};*/
+		//console.log("client._http.opts:", client._http);
+		//console.log("Access token before start:", client._http.opts.accessToken);
+		setTimeout(() => {
+			client.startClient({ initialSyncLimit: 10 });
+				client.once("sync", (state) => {
+					if (state === "PREPARED") {
+						console.log("✅ Client ready:", client);
+						setPage("chatList");
+						client.isStarted = true;
+					}
+				});
+			}, 300);
 		return () => {
 			client.stopClient?.();
 			client.removeAllListeners?.();
@@ -54,9 +64,30 @@ function App() {
 					return(
 						<div> 
 							<Login 
-								client={client}
-								onSuccess = {(userId) => {
-									setUserId(userId);
+								//client={client}
+								onSuccess = {async (res) => {
+									const store = new sdk.IndexedDBStore({
+										indexedDB: window.indexedDB,
+										dbName: `matrix-${userId}`
+									});
+									
+									console.log("token", res.access_token);
+									const authedClient = sdk.createClient({
+										baseUrl: "http://localhost:8008",
+										accessToken: res.access_token,
+										userId: res.user_id,
+										deviceId: res.device_id,
+										store: store
+									});
+									authedClient.credentials.accessToken = res.access_token;
+									authedClient.http.opts.accessToken = authedClient.getAccessToken();
+									await store.startup();
+									authedClient.setAccessToken(res.access_token);
+
+									
+									setUserId(res.user_id);
+									setClient(authedClient);
+									
 								}}
 								onSignup = {() => setPage("signup")}
 							/> 
@@ -85,9 +116,11 @@ function App() {
 						<div>
 							<ChatList
 								client={client}
-								onSelectChat={(curChat) => {setCurChat(curChat); setPage("chatRoom");}}
+								onSelectChat={(curChat) => {
+									setCurChat(curChat); 
+									setPage("chatRoom"); 
+								}}
 								onSelectBtn={(page) => {setPage(page)}}
-								userId = {userId}
 							/>
 						</div>
 					);
@@ -105,7 +138,6 @@ function App() {
 									//		after send button triggered. And the server won't send it back.
 								
 								curChat={curChat}
-								messages={[]}
 								onJump={onChangePage}
 							/>
 						</div>
@@ -114,6 +146,7 @@ function App() {
 					return(
 						<div>
 							<AddContact
+								client={client}
 								onBack={onChangePage}
 							/>
 						</div>

@@ -62,3 +62,18 @@
     justify-content: center;
     border: none;
 }
+.previewContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.previewImg{
+    width: auto;
+    height: 80px;
+    margin: 8px 12px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    object-fit: cover;
+}

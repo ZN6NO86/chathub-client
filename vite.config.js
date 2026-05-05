@@ -11,6 +11,5 @@ export default defineConfig({
   },
   optimizeDeps:{
     include: ['matrix-js-sdk'],
-    
   }
 })

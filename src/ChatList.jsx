@@ -8,6 +8,7 @@ export default function ChatList({client, onSelectChat, onSelectBtn}){
     const [chats, setChats] = useState([]);
     const [headerText, setHeadText] = useState("");
     useEffect(() =>{
+        if(!client) return;
         setHeadText(client.getUserId());
                 //console.log(client);
                 const rooms = client.getRooms();
@@ -34,8 +35,6 @@ export default function ChatList({client, onSelectChat, onSelectBtn}){
                         );
                     }
                 });
-            
-        
     },[client]);
 
     return(
@@ -53,7 +52,7 @@ export default function ChatList({client, onSelectChat, onSelectBtn}){
         {  
             chats.map((chat) => (
                 <div
-                    key={chat}
+                    key={chat.room_id}
                     onClick={() => {
                         onSelectChat(chat);
                     }}
