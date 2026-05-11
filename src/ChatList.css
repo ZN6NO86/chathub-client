@@ -19,6 +19,12 @@ html,body{
 .chatLabel+.chatLabel{
     border-top: 1px solid #ccc;
 }
+.avatar{
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 .header{
     flex-shrink: 0;
     height: 60px;

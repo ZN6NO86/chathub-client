@@ -9,7 +9,7 @@ export default function Login({onSuccess, onSignup}) {
   //const [userInfo, setUserInfo] = useState(null);
   async function handleLogin() {
     try{
-            const tmpClient = sdk.createClient({baseUrl: "http://localhost:8008"});
+            const tmpClient = sdk.createClient({baseUrl: "http://198.13.50.125:8008"});
 			const res = await tmpClient.loginRequest({
                 type: "m.login.password", 
                 identifier: {

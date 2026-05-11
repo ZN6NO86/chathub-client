@@ -11,7 +11,7 @@ function JoinGroups({client}){
     const [roomList, setRoomList] = useState([]);
     const [matchingRooms, setMatchingRooms] = useState([]);
     useEffect(() => {
-        client.publicRooms("http://localhost:8008")
+        client.publicRooms("http://198.13.50.125:8008")
             .then((res) => {
                 console.log("public roomlist: ", res.chunk);
                 setRoomList(res.chunk);

@@ -21,7 +21,7 @@ function App() {
 		setPage(nextPage);
 	}
 	/*useEffect(() =>{
-		const matrixClient = sdk.createClient({baseUrl: "http://localhost:8008"});
+		const matrixClient = sdk.createClient({baseUrl: "http://198.13.50.125:8008"});
 		setClient(matrixClient);
 	},[]);*/
 	useEffect(() => {
@@ -73,7 +73,7 @@ function App() {
 									
 									console.log("token", res.access_token);
 									const authedClient = sdk.createClient({
-										baseUrl: "http://localhost:8008",
+										baseUrl: "http://198.13.50.125:8008",
 										accessToken: res.access_token,
 										userId: res.user_id,
 										deviceId: res.device_id,

@@ -1,4 +1,5 @@
 import React, {useState } from "react";
+import * as sdk from "matrix-js-sdk";
 import './Signup.css'
 import "./Basic.css"
 import axios from "axios";
@@ -10,12 +11,21 @@ export default function Signup({onSuccess, onBack}){
     const [repeatPasswd, setRepeatPasswd] = useState("");
     const handleSignup = async ()=>{
         try{
-            const res = await axios.post("http://localhost:5111/api/auth/signup", {
-                UserId: userID,
-                UserName: nickname,
-                Password: password
+            const res = await axios.post("http://198.13.50.125:8008/_matrix/client/v3/register", {
+                username: userID,
+                password: password,
+                auth: {
+                    type: "m.login.dummy"
+                }
             });
             console.log(res.data);
+            const client = sdk.createClient({
+                baseUrl: "http://198.13.50.125:8008",
+                accessToken: res.data.access_token,
+                userId: res.data.user_id,
+            });
+            await client.setDisplayName(nickname);
+            client.stopClient();
             onSuccess();
         }catch(err){
             console.error(err);

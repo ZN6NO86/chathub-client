@@ -7,8 +7,21 @@ import "./Basic.css"
 export default function ChatList({client, onSelectChat, onSelectBtn}){
     const [chats, setChats] = useState([]);
     const [headerText, setHeadText] = useState("");
+    const [avatarUrl, setAvatarUrl] = useState("");
     useEffect(() =>{
         if(!client) return;
+        const loadAvatar = async () => {
+            const avatarMxc = await client.getProfileInfo(client.getUserId()).avatar_url;
+            const avatarUrl = client.mxcUrlToHttp(
+                avatarMxc,
+                60,
+                60,
+                "scale"
+            );
+            setAvatarUrl(avatarUrl);
+        }
+        loadAvatar();
+                        
         setHeadText(client.getUserId());
                 //console.log(client);
                 const rooms = client.getRooms();
@@ -40,6 +53,10 @@ export default function ChatList({client, onSelectChat, onSelectBtn}){
     return(
       <div className="baseLayout">
         <header className="header">
+            <img
+                className="avatar"
+                src = {avatarUrl}
+            />
             <h3>{headerText}</h3>
             <button
                 className="addBtn"
